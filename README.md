@@ -187,7 +187,7 @@ SysAlert is built with a **privacy-by-design** approach.
 ## 📜 License
 
 Released under the **MIT License**.  
-See [LICENSE](./LICENSE) for details.
+See [LICENSE](LICENSE.md) for details.
 
 ---
 
