@@ -23,7 +23,7 @@ The bot can operate in **two modes**:
 
 2. **☁️ Hosted by Us**
    - Use our hosted instance — no setup required.
-   - Just message [@trutle_sleep](https://t.me/trutle_sleep) to be added as a subscriber.
+   - Just message [@trutle_sleep](https://t.me/turtle_sleep) to be added as a subscriber.
    - Benchmark targets are limited to **3**, and monitoring targets are limited to **5**.
 
 > ⚙️ *The benchmark targets are configurable.  
