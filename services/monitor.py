@@ -58,7 +58,7 @@ async def monitoring_worker(db, tele_queue, config: Dict[str, Any]):
                 for target in customer.targets:
                     # Check enabled status (this is now fresh from DB)
                     if not target.enabled:
-                        logger.debug(f"Skipping disabled target: {target.name}")
+                        logger.debug(f"Skipping disabled target: [encrypted]")
                         continue
                     
                     asyncio.create_task(
@@ -92,7 +92,7 @@ async def _check_target(db, tele_queue, customer, target, semaphore, config):
                 response_time
             )
         except Exception:
-            logger.exception(f"Failed to write history for {target.name}")
+            logger.exception(f"Failed to write history for target: [encrypted]")
         
         # Get current consecutive failures BEFORE updating
         current_failures = target.consecutive_failures
@@ -107,7 +107,7 @@ async def _check_target(db, tele_queue, customer, target, semaphore, config):
                 not success
             )
         except Exception:
-            logger.exception(f"Failed to update target {target.name}")
+            logger.exception(f"Failed to update target: [encrypted]")
         
         # Get bot branding and thresholds
         bot_name = config.get("bot_name", "SysAlert")
@@ -129,7 +129,7 @@ async def _check_target(db, tele_queue, customer, target, semaphore, config):
                 try:
                     await tele_queue.enqueue(customer.chat_id, alert_msg)
                 except Exception:
-                    logger.exception(f"Failed to send alert for {target.name}")
+                    logger.exception(f"Failed to send alert for target: [encrypted]")
         else:
             # Success - only send recovery if it WAS failing (current_failures > 0)
             if current_failures > 0:
@@ -141,6 +141,6 @@ async def _check_target(db, tele_queue, customer, target, semaphore, config):
                 )
                 try:
                     await tele_queue.enqueue(customer.chat_id, recovery_msg)
-                    logger.info(f"Sent recovery message for {target.name}")
+                    logger.info(f"Sent recovery message for target: [encrypted]")
                 except Exception:
-                    logger.exception(f"Failed to send recovery message for {target.name}")
+                    logger.exception(f"Failed to send recovery message for target: [encrypted]")

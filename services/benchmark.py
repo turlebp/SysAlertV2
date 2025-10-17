@@ -67,12 +67,12 @@ async def check_cpu_benchmark(
                 result = _parse_possible_structures(data, target_name)
                 
                 if result is None:
-                    return False, None, f"Target '{target_name}' not found"
+                    return False, None, "Target not found in benchmark data"
                 
                 timestamp, value = result
                 
                 if value > threshold:
-                    msg = f"⚠️ CPU Benchmark: {target_name} = {value:.3f}s (threshold: {threshold}s)"
+                    msg = f"⚠️ CPU Benchmark exceeded: {value:.3f}s (threshold: {threshold}s)"
                     return True, value, msg
                 else:
                     return False, value, "OK"

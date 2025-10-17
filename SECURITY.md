@@ -135,9 +135,9 @@ No plaintext IPs, ports, or decrypted values are logged.
 - Fail securely with clear, non‑leaky errors
 
 ## Security architecture diagram
-![sec](sec.png
+![sec](sec.png)
 ## Reporting vulnerabilities
 
-Email: [security@example.com](mailto:turtle_bp@proton.me) (replace with your actual contact).
+Email: [turtle_bp@proton.me](mailto:turtle_bp@proton.me) (replace with your actual contact).
 
 Please do not open public issues for security findings.

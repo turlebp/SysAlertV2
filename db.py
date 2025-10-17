@@ -10,6 +10,7 @@ from sqlalchemy.pool import StaticPool
 
 from models import Base, Subscription, Customer, Target, History, AuditLog, BenchmarkTarget
 from utils.crypto import CryptoManager
+from utils.privacy_logger import mask_chat_id, safe_target_log, safe_bench_log
 
 logger = logging.getLogger("SysAlertBot.db")
 
@@ -79,14 +80,14 @@ class DB:
             if not s.get(Subscription, chat_id):
                 import time
                 s.add(Subscription(chat_id=chat_id, created_at=int(time.time())))
-                logger.info(f"Added subscription: {chat_id}")
+                logger.info(f"Added subscription: {mask_chat_id(chat_id)}")
     
     def remove_subscription(self, chat_id: int) -> None:
         with self.session_scope() as s:
             obj = s.get(Subscription, chat_id)
             if obj:
                 s.delete(obj)
-                logger.info(f"Removed subscription: {chat_id}")
+                logger.info(f"Removed subscription: {mask_chat_id(chat_id)}")
     
     def list_subscriptions(self) -> List[int]:
         with self.session_scope() as s:
@@ -131,7 +132,7 @@ class DB:
                 import time
                 customer.interval_seconds = interval_seconds
                 customer.updated_at = int(time.time())
-                logger.info(f"Set interval to {interval_seconds}s for customer {chat_id}")
+                logger.info(f"Set interval to {interval_seconds}s for customer {mask_chat_id(chat_id)}")
                 return True
             return False
     
@@ -149,7 +150,7 @@ class DB:
                 t.encrypted_value = encrypted_value
                 t.fingerprint = fingerprint
                 t.enabled = True
-                logger.info(f"Updated target: {name}")
+                logger.info(f"Updated target: {safe_target_log(name, ip, port)}")
             else:
                 t = Target(
                     customer_id=customer_id,
@@ -158,7 +159,7 @@ class DB:
                     fingerprint=fingerprint
                 )
                 s.add(t)
-                logger.info(f"Created target: {name}")
+                logger.info(f"Created target: {safe_target_log(name, ip, port)}")
             s.flush()
             return t
     
@@ -178,7 +179,7 @@ class DB:
             t = s.query(Target).filter_by(customer_id=customer_id, name=name).first()
             if t:
                 s.delete(t)
-                logger.info(f"Removed target: {name} for customer {customer_id}")
+                logger.info(f"Removed target: [encrypted] for customer {mask_chat_id(customer_id)}")
                 return True
             return False
     
@@ -189,7 +190,7 @@ class DB:
             if t:
                 t.enabled = enable
                 mode_str = "enabled" if enable else "disabled"
-                logger.info(f"Target {name} {mode_str} for customer {customer_id}")
+                logger.info(f"Target [encrypted] {mode_str} for customer {mask_chat_id(customer_id)}")
                 return True
             return False
     
@@ -204,7 +205,7 @@ class DB:
             
             if count > 0:
                 mode_str = "enabled" if enable else "disabled"
-                logger.info(f"All {count} targets {mode_str} for customer {customer_id}")
+                logger.info(f"All {count} targets {mode_str} for customer {mask_chat_id(customer_id)}")
             
             return count
     
@@ -238,13 +239,13 @@ class DB:
             if existing:
                 # Update network if exists
                 existing.network = network
-                logger.info(f"Updated benchmark target for {chat_id}: {target_name} on {network}")
+                logger.info(f"Updated benchmark: {safe_bench_log(target_name, network)} for user {mask_chat_id(chat_id)}")
                 return True
-            
+
             # Create new
             encrypted = self.crypto.encrypt(target_name)
             fingerprint = self.crypto.hash_value(target_name)
-            
+
             import time
             bt = BenchmarkTarget(
                 chat_id=chat_id,
@@ -254,7 +255,7 @@ class DB:
                 created_at=int(time.time())
             )
             s.add(bt)
-            logger.info(f"Added benchmark target for {chat_id}: {target_name} on {network}")
+            logger.info(f"Added benchmark: {safe_bench_log(target_name, network)} for user {mask_chat_id(chat_id)}")
             return True
     
     def remove_benchmark_target(self, chat_id: int, target_name: str) -> bool:
@@ -268,7 +269,7 @@ class DB:
             
             if bt:
                 s.delete(bt)
-                logger.info(f"Removed benchmark target for {chat_id}: {target_name}")
+                logger.info(f"Removed benchmark: {safe_bench_log(target_name, 'unknown')} for user {mask_chat_id(chat_id)}")
                 return True
             return False
     
@@ -340,7 +341,7 @@ class DB:
                 created_at=int(time.time())
             )
             s.add(log)
-            logger.info(f"Audit: {actor_chat_id} - {action}")
+            logger.info(f"Audit: {mask_chat_id(actor_chat_id)} - {action}")
     
     # === Delete account ===
     
@@ -374,4 +375,4 @@ class DB:
                 created_at=int(time.time())
             ))
             
-            logger.info(f"Deleted all data for chat_id: {chat_id}")
+            logger.info(f"Deleted all data for user: {mask_chat_id(chat_id)}")
