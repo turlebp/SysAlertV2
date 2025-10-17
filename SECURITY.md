@@ -1,115 +1,143 @@
+Here’s a refined, calmer [Security.md](http://Security.md) you can paste directly. I added a Mermaid diagram. For Notion, render diagrams to images if they don’t display natively.
+
+---
+
 # Security Architecture
 
-## Threat Model
+A calm, privacy‑first security posture designed to minimize data exposure, contain blast radius, and keep operators in control.
 
-### Protected Assets
-- User chat IDs and target configurations
+## Threat model
+
+### Protected assets
+
+- User chat IDs and subscription status
 - Monitored IP addresses and ports
 - Benchmark target preferences
-- Historical monitoring data
+- Historical monitoring results and audit events
 
-### Threats Mitigated
-- ✅ Database compromise (encryption at rest)
-- ✅ Log file exposure (no plaintext secrets)
-- ✅ Unauthorized access (admin whitelist)
-- ✅ Privilege escalation (non-root containers)
-- ✅ Data exfiltration (encrypted storage)
+### Threats mitigated
 
-## Cryptographic Design
+- Database compromise via encryption at rest
+- Log file exposure by avoiding plaintext secrets
+- Unauthorized access through admin allowlists and strict validation
+- Privilege escalation by running non‑root and reducing capabilities
+- Data exfiltration with encrypted storage and minimal metadata
 
-### Encryption (AES-GCM)
-- **Algorithm**: AES-256-GCM
-- **Key Derivation**: PBKDF2-HMAC-SHA256 (480,000 iterations)
-- **IV**: Random 12 bytes per operation
-- **Authentication**: Built-in AEAD tag
+## Cryptographic design
 
-### Hashing (HMAC-SHA256)
-- **Purpose**: Deterministic fingerprints for indexing
-- **Key**: Separate HMAC key derived from master key
-- **Output**: Hex-encoded SHA256 digest
+### Encryption (AES‑GCM)
 
-### Key Storage
-- **Master Key**: Environment variable only (never in DB)
-- **Derived Keys**: Generated at runtime via KDF
-- **Rotation**: Supported via `rotate_keys.py` script
+- Algorithm: AES‑256‑GCM
+- Key derivation: PBKDF2‑HMAC‑SHA256 with 480,000 iterations
+- IV/nonce: Random 12 bytes per operation
+- Integrity: AEAD tag provides authenticity and integrity
 
-## Security Features
+### Hashing (HMAC‑SHA256)
 
-### Input Validation
-- IP address format verification (IPv4/IPv6)
-- Port range validation (1-65535)
-- Target name sanitization
-- Command argument bounds checking
+- Purpose: Deterministic fingerprints for indexing and deduplication
+- Key: Separate HMAC key derived from the master key
+- Output: Hex‑encoded 256‑bit digest
+- Note: Fingerprints are non‑reversible and never used as a substitute for encryption
 
-### Access Control
-- Admin-only subscription management
-- Per-user data isolation
-- Chat ID validation on all operations
-- API key authentication for scripts
+### Key storage and rotation
 
-### Container Security
-- Non-root user (uid 1000)
-- Read-only root filesystem where possible
-- No unnecessary capabilities
-- Private network isolation
+- Master key: Provided via environment or secret manager only. Never stored in the database.
+- Derived keys: Generated at runtime via the KDF. Not persisted.
+- Rotation: Supported via scripts/rotate_[keys.py](http://keys.py) to re‑encrypt stored ciphertexts with a new key.
 
-### Rate Limiting
-- Per-chat message rate limit (1 msg/sec)
-- Global concurrent check limit (50 default)
-- Exponential backoff on failures
-- Queue overflow protection
+## Security features
 
-## Operational Security
+### Input validation
 
-### Secrets Management
+- IP address format verification for IPv4 and IPv6
+- Port range validation (1–65535)
+- Target name sanitization and length limits
+- Command argument bounds checking with clear error messages
+
+### Access control
+
+- Admin‑only subscription management
+- Per‑user data isolation in all handlers and queries
+- Chat ID validation on every operation
+- Optional API key authentication for administrative scripts
+
+### Container security
+
+- Non‑root user (uid 1000)
+- Read‑only root filesystem where feasible
+- Drop all unnecessary Linux capabilities
+- Private network isolation behind firewall or compose network
+
+### Rate limiting and resiliency
+
+- Per‑chat message rate limit (default 1 msg/sec)
+- Global concurrent check limit (default 50)
+- Exponential backoff on transient failures
+- Queue overflow protection with safe shedding
+
+## Operational security
+
+### Secrets management
+
 ```bash
 # NEVER commit secrets to git
-# Store in environment variables or secret managers
-export MASTER_KEY=$(python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+# Store in environment variables or a secret manager
+
+export MASTER_KEY=$(python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
 export TELEGRAM_TOKEN="your_bot_token"
 ```
 
-### Key Rotation
+### Key rotation
+
 ```bash
-# Generate new key
-export NEW_MASTER_KEY=$(python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+# Generate a new key
+export NEW_MASTER_KEY=$(python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
 
 # Rotate all encrypted data
-python scripts/rotate_keys.py --old-key "$MASTER_KEY" --new-key "$NEW_MASTER_KEY"
+python scripts/rotate_[keys.py](http://keys.py) --old-key "$MASTER_KEY" --new-key "$NEW_MASTER_KEY"
 
 # Update environment
 export MASTER_KEY="$NEW_MASTER_KEY"
 ```
 
-### Audit Logging
-All sensitive operations logged:
-- User data access/modification
-- Target addition/removal
-- Key rotation events
-- Admin actions
+### Audit logging
 
-### Secure Defaults
-- Encryption enabled by default
-- No auto-subscribe (admin approval required)
-- Minimal logging (no plaintext sensitive data)
-- Secure random for all crypto operations
+Sensitive operations are logged in a redacted, low‑noise format:
+
+- User data access or modification
+- Target addition and removal
+- Key rotation events
+- Administrative actions
+
+No plaintext IPs, ports, or decrypted values are logged.
+
+### Secure defaults
+
+- Encryption enabled by default for sensitive fields
+- No auto‑subscribe; admin approval required
+- Minimal logging at `WARNING` in production
+- Cryptography uses secure random sources
 
 ## Compliance
 
-### Data Protection
-- GDPR-compliant data deletion (`/delete_account`)
-- Minimal data retention
-- User-controlled data access
-- Audit trail for data operations
+### Data protection
 
-### Best Practices
-- Principle of least privilege
-- Defense in depth
-- Secure by default
-- Fail securely
+- GDPR‑style deletion via `/delete_account` with confirmation token
+- Minimal data retention aligned to operational needs
+- Operator‑controlled data access (self‑hosting recommended)
+- Audit trail for data operations and admin actions
 
-## Reporting Vulnerabilities
+### Best practices
 
-Email: security@example.com (replace with actual contact)
+- Least privilege across services and roles
+- Defense in depth for network, runtime, and data layers
+- Secure by default configurations
+- Fail securely with clear, non‑leaky errors
 
-**DO NOT** open public issues for security vulnerabilities.
+## Security architecture diagram
+![sec](sec.png
+## Reporting vulnerabilities
+
+Email: [security@example.com](mailto:turtle_bp@proton.me) (replace with your actual contact).
+
+Please do not open public issues for security findings.
