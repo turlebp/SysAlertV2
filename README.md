@@ -1,86 +1,133 @@
-# SysAlert Monitor Bot v2
 
-Production-grade Telegram monitoring bot with privacy-hardened encrypted storage, per-user benchmarks, and flexible target management.
 
-## Features
+# 🚨 SysAlert Monitor Bot v2
 
-- 🔐 **Privacy by Design**: AES-GCM encrypted targets, HMAC-SHA256 fingerprints
-- 🎯 **Per-User Benchmarks**: Custom benchmark targets per chat ID
-- 🔄 **Key Rotation**: Built-in cryptographic key rotation support
-- 🚀 **Easy Deployment**: Docker + docker-compose with non-root containers
-- 🧪 **Production Ready**: Comprehensive tests, CI/CD, audit logging
-- 🔒 **Security Hardened**: Input validation, rate limits, least privilege
-- 📊 **Monitoring**: TCP checks, CPU benchmarks, historical tracking
+**Your intelligent Telegram monitoring companion** for production systems — built with enterprise-grade encryption, personalized benchmarks, and flexible target management.
 
-## Quick Start
-```bash
-# 1. Clone and install
-git clone <repo>
-cd sysalert-monitor-bot
-make install
+> **🎉 What's New:** We've added more commands to give you even greater control over your monitoring setup! Check out the expanded command list below to see what's now available.
+> 
 
-# 2. Configure
-cp .env.example .env
-# Edit .env with your TELEGRAM_TOKEN, ADMIN_USER_IDS, etc.
+---
 
-# 3. Generate master key
-python scripts/bootstrap.sh
+## What Makes This Different?
 
-# 4. Initialize database
-make init-db
+**Built for privacy-conscious teams.** Every target you monitor is encrypted at rest using AES-GCM encryption with HMAC-SHA256 fingerprints. No plaintext storage. Ever.
 
-# 5. Run tests
-make test
+**Personalized to your needs.** Set custom benchmark targets for each chat ID, track historical performance, and get alerts that matter to you.
 
-# 6. Start bot
-docker-compose up -d
-```
+**Deploy with confidence.** Production-ready architecture with comprehensive testing, CI/CD pipelines, and security hardening built in from day one.
 
-## Architecture
+---
 
-- **Language**: Python 3.11+ (async)
-- **Bot Framework**: python-telegram-bot (async)
-- **Database**: SQLAlchemy + Alembic
-- **Encryption**: AES-GCM + HMAC-SHA256
-- **Container**: Docker (non-root user)
-- **Tests**: pytest + pytest-asyncio
+## Key Capabilities
 
-## Documentation
+🔐 **Privacy by Design** — All monitoring targets encrypted with AES-GCM, indexed via HMAC fingerprints instead of plaintext
 
-- [SECURITY.md](SECURITY.md) - Security architecture and practices
-- [PRIVACY.md](PRIVACY.md) - Data handling and encryption details
-- [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment steps
+🎯 **Per-User Benchmarks** — Define custom performance baselines that adapt to your infrastructure
 
-## Commands
+🔄 **Cryptographic Key Rotation** — Built-in support for rotating encryption keys without downtime
 
-### User Commands
-- `/start` - Welcome message
-- `/whoami` - Show chat ID and status
-- `/setbench <target>` - Set benchmark target (e.g., `turtle`, `chainblock`)
-- `/addtarget <spec> [as <alias>]` - Add monitoring target
-- `/get cpu` - Show benchmark score
-- `/get <target>` - Show target status
-- `/delete_account` - Delete all your data
-- `/status` - View all targets
-- `/history` - Recent check history
+🚀 **Zero-Friction Deployment** — Docker and docker-compose configurations with non-root containers ready to go
 
-### Admin Commands
-- `/addsub <chat_id>` - Add subscription
-- `/rmsub <chat_id>` - Remove subscription
-- `/stats` - Bot statistics
+🧪 **Production Hardened** — Complete test coverage, CI/CD integration, and comprehensive audit logging
 
-## Privacy & Security
+🔒 **Security First** — Input validation, rate limiting, and least-privilege access controls throughout
 
-✅ All targets encrypted at rest (AES-GCM)  
-✅ HMAC fingerprints for lookups (no plaintext indexing)  
-✅ Key rotation support via CLI  
-✅ User data deletion on request  
-✅ Non-root Docker containers  
-✅ Audit logging for all operations  
-✅ No plaintext logging of sensitive data  
+📊 **Smart Monitoring** — TCP connectivity checks, CPU benchmarking, and historical trend analysis
 
-See [PRIVACY.md](PRIVACY.md) for full details.
+---
+
+## Get Started in 5 Minutes
+
+See the [Deployment Guide](DEPLOYMENT.md)
+**That's it!** Your bot is now running and ready to accept commands.
+
+---
+
+## Technical Architecture
+
+Built on modern, battle-tested technologies:
+
+- **Language**: Python 3.11+ with async/await patterns
+- **Bot Framework**: python-telegram-bot (fully async)
+- **Database**: SQLAlchemy ORM with Alembic migrations
+- **Encryption**: AES-GCM authenticated encryption with HMAC-SHA256
+- **Container**: Docker with non-root user security
+- **Testing**: pytest with asyncio support
+
+---
+
+## Dive Deeper
+
+Want to understand the security model or deploy to production? Check out our comprehensive guides:
+
+- [SECURITY.md](http://SECURITY.md) — Security architecture, threat model, and best practices
+- [PRIVACY.md](http://PRIVACY.md) — Data handling policies and encryption implementation details
+
+---
+
+## How to Use It
+
+### For All Users
+
+**Getting oriented:**
+
+- `/start` — Get a friendly welcome and overview
+- `/whoami` — Check your chat ID and subscription status
+
+If you're not hosting this bot yourself,then you can chat us at `https://t.me/trutle_sleep` to add your chat id into susbcriber with zero complexity and zero hidden fees.
+
+**Managing your monitoring:**
+
+- `/setbench <target>` — Set your benchmark target (try `turtle` or `chainblock`)
+- `/addtarget <spec> [as <alias>]` — Add a new monitoring target with optional friendly name
+- `/get cpu` — View your current benchmark score
+- `/get <target>` — Check the status of a specific target
+- `/status` — See all your active monitoring targets at a glance
+- `/history` — Review recent check results
+- `/listbench` — List all available benchmark targets
+
+![command list](commands list.png)
+
+**Privacy controls:**
+
+- `/delete_account` — Permanently delete all your data (no questions asked)
+
+### For Administrators
+
+**Subscription management:**
+
+- `/addsub <chat_id>` — Grant monitoring access to a new user
+- `/rmsub <chat_id>` — Revoke access for a user
+- `/stats` — View bot-wide usage statistics
+
+---
+
+## Your Privacy Matters
+
+We've architected this bot with privacy as the foundation, not an afterthought:
+
+✅ **Encrypted at rest** — All targets use AES-GCM authenticated encryption
+
+✅ **Private indexing** — HMAC fingerprints mean no plaintext data in lookups
+
+✅ **Key rotation ready** — Rotate encryption keys via CLI without service interruption
+
+✅ **Right to deletion** — Users can request complete data deletion anytime
+
+✅ **Container security** — Non-root Docker containers limit privilege escalation
+
+✅ **Audit trail** — Every operation logged for security review
+
+✅ **Clean logs** — Zero sensitive data in plaintext logs
+
+**Want the full technical breakdown?** Read our [PRIVACY.md](http://PRIVACY.md) documentation.
+
+---
 
 ## License
 
-MIT License - See LICENSE file
+Released under the MIT License — see the LICENSE file for complete terms.
+
+---
+
