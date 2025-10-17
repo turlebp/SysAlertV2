@@ -28,15 +28,12 @@ For efficient lookups without storing plaintext:
 - **Collision Resistant**: SHA256-based hashing
 
 ### Example Storage
-```python
-# User adds target: 192.168.1.100:9876
-# Stored as:
-{
-    "encrypted_value": "gAAAABj...",  # AES-GCM encrypted
-    "fingerprint": "a3f5c9...",       # HMAC-SHA256 hash
-    "chat_id": 123456789              # User identifier
-}
-```
+
+User adds target: 192.168.1.100:9876 or `/setbench turtlebp`
+Stored as:
+
+ ![privacy_proof](privacy.png)
+
 
 ## Data Access
 
@@ -122,6 +119,7 @@ Encrypted backups available on request. Master key required to decrypt.
 
 ## Contact
 
-Privacy questions: privacy@example.com (replace with actual)
+Privacy questions: turtle_bp@proton.me
 
 Data deletion requests: Send `/delete_account` command in bot
+
