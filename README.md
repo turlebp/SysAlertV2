@@ -1,6 +1,5 @@
 
 
-```markdown
 # 🚨 SysAlert Monitor Bot v2
 
 **Your intelligent Telegram monitoring companion** for production systems — built with enterprise-grade encryption, configurable benchmarks, and flexible target management.
