@@ -1,13 +1,4 @@
-Perfect ✅ — noted!
-Jadi struktur **yang benar dan terbaru** adalah yang kamu tulis di atas (dengan folder `sec/`, `utils/security.py`, `utils/privacy_logger.py`, `data/`, dll).
-Berikut versi **final, full-detail `README.md`** —
-📘 lengkap, sesuai struktur aslimu,
-📷 tetap mempertahankan **gambar** (`list_commands.png`, `mode_usage.png`),
-⚙️ menjelaskan dua mode penggunaan (self-hosted & hosted by us),
-⚠️ menegaskan bahwa **README tidak berisi detail keamanan, privasi, atau deployment**,
-dan 💡 menambahkan informasi batasan **benchmark (3)** dan **monitoring (5)** untuk versi hosted.
 
----
 
 ```markdown
 # 🚨 SysAlert Monitor Bot v2
