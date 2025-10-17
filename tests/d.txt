@@ -1,0 +1,48 @@
+"""
+Test TCP monitoring
+"""
+import pytest
+import asyncio
+from services.monitor import tcp_check
+
+
+@pytest.mark.asyncio
+async def test_tcp_check_timeout():
+    """Test timeout handling"""
+    success, rtt, error = await tcp_check("10.255.255.1", 65535, timeout=0.5)
+    
+    assert not success
+    assert rtt == 0.0
+    assert "timeout" in error.lower() or "error" in error.lower()
+
+
+@pytest.mark.asyncio
+async def test_tcp_check_refused():
+    """Test connection refused"""
+    success, rtt, error = await tcp_check("127.0.0.1", 59999, timeout=1.0)
+    
+    assert not success
+    assert "refused" in error.lower() or "error" in error.lower()
+
+
+@pytest.mark.asyncio
+async def test_tcp_check_success():
+    """Test successful connection"""
+    # Create test server
+    server = await asyncio.start_server(
+        lambda r, w: None,
+        '127.0.0.1',
+        0
+    )
+    
+    port = server.sockets[0].getsockname()[1]
+    
+    try:
+        success, rtt, error = await tcp_check("127.0.0.1", port, timeout=2.0)
+        
+        assert success
+        assert rtt > 0
+        assert error == ""
+    finally:
+        server.close()
+        await server.wait_closed()
