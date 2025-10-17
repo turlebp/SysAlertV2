@@ -77,6 +77,13 @@ Want to understand the security model or deploy to production? Check out our com
 
 If you're not hosting this bot yourself,then you can chat us at `https://t.me/trutle_sleep` to add your chat id into susbcriber with zero complexity and zero hidden fees.
 
+**Adding your first target**
+to add a target,you can use `/addtarget` with 3 choices of arguments. 
+1.with DOMAIN
+2.with DOMAIN:PORT
+3.with IP:PORT
+These changes makes more reliable 
+
 **Managing your monitoring:**
 
 - `/setbench <target>` — Set your benchmark target (try `turtle` or `chainblock`)
@@ -86,8 +93,13 @@ If you're not hosting this bot yourself,then you can chat us at `https://t.me/tr
 - `/status` — See all your active monitoring targets at a glance
 - `/history` — Review recent check results
 - `/listbench` — List all available benchmark targets
+- `/mode` - used for enable OR disable monitoring. 
 
-![command list](commands list.png)
+![command_list](list_commands.png)
+
+**Set mode** 
+You can disable monitoring for your server with `/mode maintenace server1` or disable all monitoring with `/mode maintenance all`. you activate it back with `/mode active server1` or to activate all monitoring `/mode active all`. and you'll get the success message if it's recovered
+![Mode_usage](mode_usage.png)
 
 **Privacy controls:**
 
